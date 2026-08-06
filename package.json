@@ -1,24 +1,20 @@
 {
-  "name": "js-clipper",
+  "name": "js-clipper-monorepo",
   "version": "1.0.0",
-  "description": "common.js compatible version of JSClipper",
-  "main": "clipper.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mathisonian/JsClipper.git"
-  },
-  "keywords": [
-    "JsClipper",
-    "js-clipper",
-    "clipperlib"
+  "packageManager": "npm@9.3.1",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
   ],
-  "author": "",
-  "license": "boost",
-  "bugs": {
-    "url": "https://github.com/mathisonian/JsClipper/issues"
+  "scripts": {
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "build": "turbo run build"
   },
-  "homepage": "https://github.com/mathisonian/JsClipper"
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
 }
