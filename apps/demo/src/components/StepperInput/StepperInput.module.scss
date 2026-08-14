@@ -1,0 +1,23 @@
+@use "../../colors" as colors;
+@use "../../fontSizes" as fontSizes;
+@use "../../spacings" as spacings;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacings.$xs;
+}
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  @include fontSizes.text;
+  color: colors.$primary-text;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: spacings.$sm;
+}

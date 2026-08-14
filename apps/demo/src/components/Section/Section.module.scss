@@ -1,0 +1,15 @@
+@use "../../spacings" as spacings;
+@use "../../fontSizes" as fontSizes;
+@use "../../colors" as colors;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacings.$md;
+}
+.title {
+  @include fontSizes.section-header;
+  font-weight: bold;
+  border-bottom: 1px solid colors.$primary-text;
+  padding-bottom: spacings.$xs;
+}

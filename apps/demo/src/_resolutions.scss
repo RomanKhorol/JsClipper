@@ -1,0 +1,19 @@
+@use "sass:map";
+
+$breakpoints: (
+  "sm": 960px,
+  "md": 1280px,
+  "lg": 1584px,
+);
+@mixin respond-to($breakpoint) {
+  // Check if the key exists in the map
+  @if map.has-key($breakpoints, $breakpoint) {
+    $value: map.get($breakpoints, $breakpoint);
+
+    @media screen and (min-width: $value) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$breakpoint}.";
+  }
+}

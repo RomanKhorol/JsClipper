@@ -1,0 +1,40 @@
+@use "../../colors" as colors;
+@use "../../spacings" as spacings;
+@use "../../fontSizes" as fontSizes;
+
+@mixin variant($color, $hoverColor, $activeColor) {
+  background-color: $color;
+  &:hover {
+    transform: scale(1.05);
+    background-color: $hoverColor;
+  }
+  &:active {
+    transform: scale(0.98);
+    background-color: $activeColor;
+  }
+}
+
+.button {
+  border: none;
+  text-transform: capitalize;
+  font-weight: bold;
+  color: colors.$primary-text;
+  border-radius: spacings.$sm;
+  @include fontSizes.text;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+.primary {
+  @include variant(
+    colors.$primary-action,
+    colors.$primary-action-hover,
+    colors.$primary-action-pressed
+  );
+}
+.secondary {
+  @include variant(
+    colors.$secondary-action,
+    colors.$secondary-action-hover,
+    colors.$secondary-action-pressed
+  );
+}

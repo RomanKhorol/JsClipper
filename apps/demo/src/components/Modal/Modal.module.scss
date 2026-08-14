@@ -1,0 +1,54 @@
+@use "../../colors" as colors;
+@use "../../fontSizes" as fontSizes;
+@use "../../spacings" as spacings;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: spacings.$md;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 60rem);
+  max-height: calc(100vh - #{spacings.$xl});
+  background-color: colors.$background2;
+  border: 1px solid colors.$background1;
+  border-radius: spacings.$sm;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: spacings.$sm;
+  padding: spacings.$sm spacings.$md;
+  border-bottom: 1px solid colors.$background1;
+}
+
+.title {
+  @include fontSizes.section-header;
+  margin: 0;
+  margin-right: auto;
+}
+
+.close {
+  @include fontSizes.text;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: colors.$primary-text;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.content {
+  padding: spacings.$md;
+  overflow: auto;
+}

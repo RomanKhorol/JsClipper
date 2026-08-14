@@ -1,0 +1,55 @@
+@use "../colors" as colors;
+@use "../fontSizes" as fontSizes;
+@use "../spacings" as spacings;
+
+.root,
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.root {
+  gap: spacings.$md;
+}
+
+.section {
+  gap: spacings.$sm;
+}
+
+.title {
+  @include fontSizes.section-header;
+  margin: 0;
+  padding-bottom: spacings.$xs;
+  border-bottom: 1px solid colors.$primary-text;
+}
+
+.source {
+  @include fontSizes.text;
+  width: 100%;
+  min-height: 12rem;
+  box-sizing: border-box;
+  resize: vertical;
+  color: colors.$primary-text;
+  background-color: colors.$background1;
+  border: 1px solid colors.$background2;
+}
+
+.outputControls {
+  display: flex;
+  gap: spacings.$sm;
+}
+
+.source {
+  min-height: 4rem;
+  resize: none;
+}
+
+.select {
+  min-width: 9rem;
+}
+
+.table {
+  @include fontSizes.text;
+  color: colors.$primary-text;
+  border: 1px solid colors.$background2;
+}

@@ -1,0 +1,70 @@
+@use "../../colors" as colors;
+@use "../../spacings" as spacings;
+@use "../../fontSizes" as fontSizes;
+@use "../../resolutions" as resolutions;
+
+@mixin variant($color, $hoverColor, $activeColor) {
+  background-color: $color;
+  &:hover {
+    transform: scale(1.05);
+    background-color: $hoverColor;
+  }
+  &:active {
+    transform: scale(0.98);
+    background-color: $activeColor;
+  }
+}
+
+.button {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  border: none;
+  text-transform: capitalize;
+  font-weight: bold;
+  color: colors.$primary-text;
+  border-radius: 50%;
+  border: spacings.$xs solid colors.$background1;
+  @include fontSizes.text;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+  @include resolutions.respond-to("sm") {
+    width: 22px;
+    height: 22px;
+  }
+
+  @include resolutions.respond-to("md") {
+    width: 24px;
+    height: 24px;
+  }
+
+  @include resolutions.respond-to("lg") {
+    width: 26px;
+    height: 26px;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    filter: grayscale(1);
+    cursor: not-allowed;
+  }
+}
+.primary {
+  @include variant(
+    colors.$primary-action,
+    colors.$primary-action-hover,
+    colors.$primary-action-pressed
+  );
+}
+.secondary {
+  @include variant(
+    colors.$secondary-action,
+    colors.$secondary-action-hover,
+    colors.$secondary-action-pressed
+  );
+}

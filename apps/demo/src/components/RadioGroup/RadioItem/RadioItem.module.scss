@@ -1,0 +1,65 @@
+@use "../../../spacings" as spacings;
+@use "../../../fontSizes" as fontSizes;
+@use "../../../colors" as colors;
+@use "../../../resolutions" as resolutions;
+
+.root {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: spacings.$xs;
+  cursor: pointer;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+  &:hover {
+    transform: scale(1.05);
+    color: colors.$primary-action-hover;
+  }
+}
+
+.label {
+  @include fontSizes.text;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+  min-width: 50px;
+  max-width: 50px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  height: fit-content;
+
+  @include resolutions.respond-to("sm") {
+    min-width: 70px;
+    max-width: 70px;
+  }
+
+  @include resolutions.respond-to("md") {
+    min-width: 80px;
+    max-width: 80px;
+  }
+
+  @include resolutions.respond-to("lg") {
+    min-width: 120px;
+    max-width: 120px;
+  }
+}
+
+.radio {
+  background-color: colors.$primary-text;
+  width: spacings.$md;
+  height: spacings.$md;
+  border-radius: 50%;
+  border: 2px solid colors.$background1;
+  box-sizing: border-box;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+
+.selected {
+  & > .label {
+    font-weight: bold;
+  }
+  & > .radio {
+    background-color: colors.$primary-action;
+  }
+}

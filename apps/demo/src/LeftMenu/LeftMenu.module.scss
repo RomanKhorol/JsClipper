@@ -1,0 +1,79 @@
+@use "sass:map";
+@use "../spacings" as spacings;
+@use "../resolutions" as resolutions;
+@use "../colors" as colors;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: spacings.$xxs;
+  @include resolutions.respond-to("sm") {
+    gap: spacings.$xs;
+  }
+
+  @include resolutions.respond-to("md") {
+    gap: spacings.$sm;
+  }
+
+  @include resolutions.respond-to("lg") {
+    gap: spacings.$md;
+  }
+}
+
+.cleaningControls {
+  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: spacings.$md;
+}
+
+.offsettingGrid {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: spacings.$md;
+  & > * {
+    margin-top: auto;
+  }
+}
+
+.optionGroup,
+.offsetValues {
+  display: flex;
+  flex-direction: column;
+  gap: spacings.$sm;
+}
+
+.optionGroup > div:first-child {
+  color: colors.$secondary-text;
+  font-weight: bold;
+}
+
+.offsetValues {
+  grid-column: 1 / -1;
+  padding-top: spacings.$sm;
+  border-top: 1px solid colors.$background1;
+}
+
+.scaleControl {
+  display: flex;
+}
+
+@media (min-width: map.get(resolutions.$breakpoints, "sm")) {
+  .root {
+    gap: spacings.$lg;
+  }
+
+  .offsettingGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .offsetValues {
+    grid-column: auto;
+    min-width: 12rem;
+    padding-top: 0;
+    border-top: 0;
+  }
+}

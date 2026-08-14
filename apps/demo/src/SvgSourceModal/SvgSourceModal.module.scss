@@ -1,0 +1,13 @@
+@use "../colors" as colors;
+@use "../fontSizes" as fontSizes;
+
+.source {
+  @include fontSizes.text;
+  width: 100%;
+  min-height: 24rem;
+  box-sizing: border-box;
+  resize: vertical;
+  color: colors.$primary-text;
+  background-color: colors.$background1;
+  border: 1px solid colors.$background2;
+}

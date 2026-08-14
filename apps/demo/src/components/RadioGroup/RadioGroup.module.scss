@@ -1,0 +1,7 @@
+@use "../../spacings" as spacings;
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacings.$sm;
+}

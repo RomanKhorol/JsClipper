@@ -817,6 +817,12 @@ function bindInputListeners() {
       if (r.subjPolygonCount < rs[rs.current].min.subjPolygonCount) r.subjPolygonCount = rs[rs.current].min.subjPolygonCount;
       if (r.subjPolygonCount > rs[rs.current].max.subjPolygonCount) r.subjPolygonCount = rs[rs.current].max.subjPolygonCount;
       $('#subj_polygon_count').val(r.subjPolygonCount);
+      window.dispatchEvent(new CustomEvent('jsclipper:random-settings', { detail: {
+        clipPointCount: r.clipPointCount,
+        clipPolygonCount: r.clipPolygonCount,
+        subjPointCount: r.subjPointCount,
+        subjPolygonCount: r.subjPolygonCount
+      } }));
       subj.random = getRandomPolygons('subj', val);
       clip.random = getRandomPolygons('clip', val);
     }
@@ -903,12 +909,14 @@ function bindInputListeners() {
   // Subject FillType
   $('input[name="subject_fillType"]').change(function () {
     subj.fillType = _.parseInt(this.value);
+    window.dispatchEvent(new CustomEvent('jsclipper:boolean-settings', { detail: { subjectFillType: subj.fillType, clipFillType: clip.fillType, clipType: clipType } }));
     makeClip();
   });
 
   // Clip FillType
   $('input[name="clip_fillType"]').change(function () {
     clip.fillType = _.parseInt(this.value);
+    window.dispatchEvent(new CustomEvent('jsclipper:boolean-settings', { detail: { subjectFillType: subj.fillType, clipFillType: clip.fillType, clipType: clipType } }));
     makeClip();
   });
 
@@ -918,6 +926,7 @@ function bindInputListeners() {
     $('input[name="offsettable_poly"][value="' + offsettablePoly + '"]').prop('checked', true);
     clipType = $('input[name="clipType"]:checked').val();
     if (clipType !== '') clipType = _.parseInt(clipType);
+    window.dispatchEvent(new CustomEvent('jsclipper:boolean-settings', { detail: { subjectFillType: subj.fillType, clipFillType: clip.fillType, clipType: clipType } }));
     makeClip();
   });
 
@@ -1387,7 +1396,7 @@ function makeClip() {
   updateEnlargedSVGSource();
 }
 
-window.onload = function () {
+function startLegacyDemo() {
   ClipperLibOriginalMaxSteps = ClipperLib.MaxSteps;
   bench = new Benchmark();
   p = SVG.create();
@@ -1397,4 +1406,164 @@ window.onload = function () {
   makeClip();
   colorizeBoxes();
   setDefaultCustomPolygons();
+}
+
+window.JsClipperLegacy = {
+  getDefaultCustomPolygonSet: function () {
+    return {
+      subj: defaultCustomSubjectPolygon,
+      clip: defaultCustomClipPolygon
+    };
+  },
+  normalizeCustomPolygon: function (value) {
+    var normalized = normalizeClipperPolygons(value);
+    return normalized === false ? undefined : normalized;
+  },
+  applyCustomPolygonSet: function (polygonSet) {
+    defaultPolygons[10] = polygonSet;
+    makeClip();
+  },
+  selectPolygon: function (value) {
+    $('input[type="radio"][name="polygons"][value="' + value + '"]').prop('checked', true).change();
+  },
+  setSubjectFillType: function (value) {
+    $('input[name="subject_fillType"][value="' + value + '"]').prop('checked', true).change();
+  },
+  setClipFillType: function (value) {
+    $('input[name="clip_fillType"][value="' + value + '"]').prop('checked', true).change();
+  },
+  setClipType: function (value) {
+    $('input[name="clipType"][value="' + value + '"]').prop('checked', true).change();
+  },
+  getBooleanSettings: function () {
+    return { subjectFillType: subj.fillType, clipFillType: clip.fillType, clipType: clipType };
+  },
+  generateRandomPolygons: function () {
+    subj.random = getRandomPolygons('subj');
+    clip.random = getRandomPolygons('clip');
+    makeClip();
+  },
+  getRandomCounts: function () {
+    return {
+      clipPointCount: randomSetting.clipPointCount,
+      clipPolygonCount: randomSetting.clipPolygonCount,
+      subjPointCount: randomSetting.subjPointCount,
+      subjPolygonCount: randomSetting.subjPolygonCount
+    };
+  },
+  setRandomCount: function (key, value) {
+    if (isNaN(value) || value < 1) return;
+    var limits = randomSettings[randomSettings.current];
+    randomSetting[key] = Math.min(limits.max[key], Math.max(limits.min[key], Math.floor(value)));
+    subj.random = getRandomPolygons('subj');
+    clip.random = getRandomPolygons('clip');
+    makeClip();
+    return randomSetting[key];
+  },
+  setGeometryOption: function (key, value) {
+    if (key === 'clean') clean = value;
+    if (key === 'simplify') simplify = value;
+    if (key === 'lighten') lighten = value;
+    makeClip();
+  },
+  setGeometryTolerance: function (key, value) {
+    if (isNaN(value)) return;
+    if (key === 'cleanDelta') cleanDelta = value;
+    if (key === 'lightenDistance') lightenDistance = value;
+    makeClip();
+  },
+  getGeometrySettings: function () {
+    return { clean: clean, cleanDelta: cleanDelta, simplify: simplify, lighten: lighten, lightenDistance: lightenDistance };
+  },
+  setScale: function (value) {
+    if (isNaN(value) || value <= 0) return;
+    scale = value;
+    subj.random = null;
+    clip.random = null;
+    makeClip(true);
+  },
+  getScale: function () { return scale; },
+  setOffsetTarget: function (value) {
+    offsettablePoly = value;
+    if (value === 'subject' || value === 'clip') clipType = '';
+    window.dispatchEvent(new CustomEvent('jsclipper:offset-settings', { detail: { target: offsettablePoly, joinType: joinType, delta: delta, miterLimit: miterLimit, autoFix: autoFix } }));
+    window.dispatchEvent(new CustomEvent('jsclipper:boolean-settings', { detail: { subjectFillType: subj.fillType, clipFillType: clip.fillType, clipType: clipType } }));
+    makeClip();
+  },
+  setJoinType: function (value) {
+    joinType = value;
+    window.dispatchEvent(new CustomEvent('jsclipper:offset-settings', { detail: { target: offsettablePoly, joinType: joinType, delta: delta, miterLimit: miterLimit, autoFix: autoFix } }));
+    makeClip();
+  },
+  setOffsetValues: function (nextDelta, nextMiterLimit, nextAutoFix) {
+    delta = nextDelta;
+    miterLimit = Math.max(1, nextMiterLimit);
+    autoFix = nextAutoFix;
+    window.dispatchEvent(new CustomEvent('jsclipper:offset-settings', { detail: { target: offsettablePoly, joinType: joinType, delta: delta, miterLimit: miterLimit, autoFix: autoFix } }));
+    makeClip();
+  },
+  getOffsetSettings: function () {
+    return { target: offsettablePoly, joinType: joinType, delta: delta, miterLimit: miterLimit, autoFix: autoFix };
+  },
+  setOutputFormat: function (value) {
+    outputFormat = value;
+    makeClip();
+  },
+  toggleSvgView: function (view) {
+    if (view === 'source') { updateSVGSource = !updateSVGSource; $('#svg_source_container').toggle(); updateEnlargedSVGSource(); }
+    if (view === 'enlarged') { updateEnlargedSVG = !updateEnlargedSVG; $('#enlarged_svg').toggle(); updateEnlargedSVGSource(); }
+  },
+  setVisualizationOption: function (key, value) {
+    if (key === 'bevel') bevel = value ? 1 : 0;
+    if (key === 'explorerEnabled') explorerEnabled = value;
+    makeClip();
+  },
+  getVisualizationSnapshot: function () {
+    return { bevel: !!bevel, explorerEnabled: explorerEnabled, outputFormat: outputFormat };
+  },
+  getExplorerSummary: function () {
+    return { subject: subj.subPolygons, clip: clip.subPolygons, solution: solution.subPolygons };
+  },
+  getExplorerStatistics: function () {
+    return {
+      subject: { polygons: subj.subPolygons || 0, points: subj.totalPoints || 0 },
+      clip: { polygons: clip.subPolygons || 0, points: clip.totalPoints || 0 },
+      solution: { polygons: solution.subPolygons || 0, points: solution.totalPoints || 0 }
+    };
+  },
+  getExplorerPaths: function () {
+    return { subject: SVG.scaledPaths[1] || [], clip: SVG.scaledPaths[2] || [], solution: SVG.scaledPaths[3] || [] };
+  },
+  highlightExplorerPath: function (role, index) {
+    if (!SVG.scaledPaths[role] || !SVG.scaledPaths[role][index]) return;
+    SVG.highlightedPath = p.path(SVG.scaledPaths[role][index]);
+    $(SVG.highlightedPath.node).removeAttr('fill stroke').attr({ 'class': 'highlightedPath', 'fill-rule': $('#p' + role).attr('fill-rule'), 'vector-effect': 'non-scaling-stroke' });
+  },
+  inspectExplorerPath: function (role, index) {
+    var normalized = SVG.scaledPaths[role] && normalizeClipperPolygons(SVG.scaledPaths[role][index]);
+    if (normalized !== false && normalized) $('#polygon_explorer_string_inp').val(formatOutput(normalized));
+  },
+  runBenchmark: function (id) {
+    $('#' + id).triggerHandler('click');
+  },
+  getBenchmarkSnapshot: function () {
+    return { running: benchmarkRunning, output: $('#benchmark_div').text(), detailsHtml: $('#benchmark_multiple_table_cont').html() };
+  },
+  getBenchmarkExport: function () {
+    return benchmarkExports;
+  },
+  loadBuiltinCustomPolygon: function (polygon) {
+    var subjPoly = '', clipPoly = '';
+    dontRoundAndScale = true;
+    if (polygon !== 4 && polygon !== 5) { subjPoly = deserializeClipperPolygon(defaultPolygons[polygon].subj); clipPoly = deserializeClipperPolygon(defaultPolygons[polygon].clip); }
+    else { subjPoly = getRandomPolygons('subj', polygon); clipPoly = getRandomPolygons('clip', polygon); }
+    dontRoundAndScale = false;
+    return { subj: formatOutput(JSON.stringify(subjPoly)), clip: formatOutput(JSON.stringify(clipPoly)) };
+  }
 };
+
+if (document.readyState === 'complete') {
+  startLegacyDemo();
+} else {
+  window.addEventListener('load', startLegacyDemo, { once: true });
+}

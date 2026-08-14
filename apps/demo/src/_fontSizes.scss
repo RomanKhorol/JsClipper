@@ -1,0 +1,27 @@
+@use "./resolutions" as resolutions;
+
+@mixin responsive-text($xs, $sm, $md, $lg) {
+  font-size: $xs;
+
+  @include resolutions.respond-to("sm") {
+    font-size: $sm;
+  }
+  @include resolutions.respond-to("md") {
+    font-size: $md;
+  }
+  @include resolutions.respond-to("lg") {
+    font-size: $lg;
+  }
+}
+@mixin text {
+  @include responsive-text(10px, 12px, 14px, 16px);
+}
+@mixin section-header {
+  @include responsive-text(12px, 14px, 16px, 18px);
+}
+@mixin header {
+  @include responsive-text(20px, 22px, 24px, 26px);
+}
+@mixin label {
+  @include responsive-text(10px, 10px, 12px, 14px);
+}

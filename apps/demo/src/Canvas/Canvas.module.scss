@@ -1,0 +1,6 @@
+@use "../colors" as colors;
+
+.root {
+  min-height: 20rem;
+  background-color: colors.$background1;
+}

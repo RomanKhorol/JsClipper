@@ -1,0 +1,14 @@
+@use "../fontSizes" as fontSizes;
+@use "../colors" as colors;
+
+.title {
+  @include fontSizes.header;
+  color: colors.$primary-text;
+  margin-right: auto;
+  font-weight: bold;
+}
+.root {
+  display: flex;
+  flex-direction: row;
+}
+

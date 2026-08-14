@@ -1,0 +1,7 @@
+@use "../colors" as colors;
+
+.preview {
+  min-height: 24rem;
+  overflow: auto;
+  background-color: colors.$background1;
+}

@@ -1,0 +1,25 @@
+@use "../../colors" as colors;
+@use "../../spacings" as spacings;
+@use "../../resolutions" as resolutions;
+
+.root {
+  background-color: colors.$background2;
+  color: colors.$primary-text;
+  padding: spacings.$xxs;
+  box-sizing: border-box;
+  border-radius: spacings.$xxs;
+  @include resolutions.respond-to("sm") {
+    padding: spacings.$xs;
+    border-radius: spacings.$xs;
+  }
+
+  @include resolutions.respond-to("md") {
+    padding: spacings.$sm;
+    border-radius: spacings.$sm;
+  }
+
+  @include resolutions.respond-to("lg") {
+    padding: spacings.$md;
+    border-radius: spacings.$md;
+  }
+}

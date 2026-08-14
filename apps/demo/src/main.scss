@@ -1,0 +1,11 @@
+@use "./colors" as colors;
+
+// The original presentation remains untouched during the compatibility phase.
+@import "../demo.css";
+
+body {
+  background-color: colors.$background0;
+  margin: 0;
+  min-height: 100vh;
+  min-width: 100vw;
+}

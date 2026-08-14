@@ -1,0 +1,79 @@
+@use "sass:map";
+@use "./spacings" as spacings;
+@use "./resolutions" as resolutions;
+
+.root {
+  padding: spacings.$sm;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: spacings.$sm;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.header {
+  grid-column: span 12;
+}
+.footer {
+  grid-column: span 12;
+}
+.leftMenu {
+  grid-column: span 12;
+}
+.canvas {
+  grid-column: span 12;
+}
+.rightMenu {
+  grid-column: span 12;
+}
+.bottomMenu {
+  grid-column: span 12;
+}
+
+@media (min-width: map.get(resolutions.$breakpoints, "sm")) {
+  .leftMenu {
+    grid-column: span 6;
+  }
+  .canvas {
+    grid-column: span 6;
+  }
+  .rightMenu {
+    grid-column: span 6;
+  }
+  .bottomMenu {
+    grid-column: span 6;
+  }
+}
+@media (min-width: map.get(resolutions.$breakpoints, "md")) {
+  .leftMenu {
+    grid-column: span 4;
+    grid-row: span 2;
+  }
+  .canvas {
+    grid-column: span 4;
+    grid-row: span 1;
+  }
+  .rightMenu {
+    grid-column: span 4;
+    grid-row: span 2;
+  }
+  .bottomMenu {
+    grid-column: 5 / span 4;
+  }
+}
+@media (min-width: map.get(resolutions.$breakpoints, "lg")) {
+  .leftMenu {
+    grid-column: span 3;
+    grid-row: span 2;
+  }
+  .canvas {
+    grid-column: span 6;
+    grid-row: span 1;
+  }
+  .rightMenu {
+    grid-column: span 3;
+    grid-row: span 2;
+  }
+  .bottomMenu {
+    grid-column: 4 / span 6;
+  }
+}

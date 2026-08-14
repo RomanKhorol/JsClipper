@@ -1,0 +1,8 @@
+@use "../../spacings" as spacings;
+
+.root {
+  align-items: center;
+  display: flex;
+  gap: spacings.$sm;
+  grid-template-columns: minmax(0, 1fr) minmax(4.5rem, 5.5rem);
+}
