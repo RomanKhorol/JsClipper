@@ -50,6 +50,7 @@ const BottomMenu: FC<BottomMenuProps> = ({
         />
         <WindowedSelect
           className={styles.select}
+          classNamePrefix="virtualized-dropdown"
           value={outputFormat}
           options={outputFormats}
           onChange={onOutputFormatChange}

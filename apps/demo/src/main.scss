@@ -9,3 +9,40 @@ body {
   min-height: 100vh;
   min-width: 100vw;
 }
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: #000000;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #28c598;
+  border-radius: 999px;
+  border: 2px solid #000000;
+  background-clip: content-box;
+  cursor: pointer;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #21a27d;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
+*::-webkit-scrollbar-corner {
+  background-color: #000000;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #28c598 #000000;
+  }
+}

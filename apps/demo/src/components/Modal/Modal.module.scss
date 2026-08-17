@@ -15,11 +15,8 @@
 .root {
   display: flex;
   flex-direction: column;
-  width: min(100%, 60rem);
+  width: min(100%, 35rem);
   max-height: calc(100vh - #{spacings.$xl});
-  background-color: colors.$background2;
-  border: 1px solid colors.$background1;
-  border-radius: spacings.$sm;
   overflow: hidden;
 }
 
@@ -49,6 +46,9 @@
 }
 
 .content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: spacings.$md;
   overflow: auto;
 }
