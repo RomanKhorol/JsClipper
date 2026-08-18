@@ -2,21 +2,22 @@
  * Reserved React mount point. The legacy demo renders before this root so new
  * React features can be introduced beside it without replacing legacy DOM.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { Container } from "./components";
 import { Canvas } from "./Canvas";
 import styles from "./App.module.scss";
 import { Header } from "./Header";
 import "./i18n";
-import { LeftMenu, type LeftMenuInputValue, type LeftMenuInputValues } from "./LeftMenu";
-import { BottomMenu, type ExplorerRow, type OutputFormat } from "./BottomMenu";
+import { LeftMenu, type LeftMenuInputValue } from "./LeftMenu";
+import { BottomMenu, type ExplorerRow } from "./BottomMenu";
 import { EnlargedSvgModal } from "./EnlargedSvgModal";
 import { SvgSourceModal } from "./SvgSourceModal";
-import { benchmarkButtons, type BenchmarkRun, RightMenu } from "./RightMenu";
+import { benchmarkButtons, RightMenu } from "./RightMenu";
+import { createInitialDemoState, demoReducer, outputFormats } from "./features/demo/reducer";
+import { DemoActionType } from "./features/demo/types";
 
 const languages = ["en", "uk", "de", "pl"] as const;
-const outputFormats: OutputFormat[] = ["Clipper", "Plain", "SVG"].map((value) => ({ value, label: value }));
 
 const readExplorerRows = (): ExplorerRow[] => {
   const value = (id: string) => document.getElementById(id)?.textContent?.trim() || "—";
@@ -31,53 +32,41 @@ const readExplorerRows = (): ExplorerRow[] => {
 
 export const App = () => {
   const { i18n } = useTranslation();
-  const [inputValues, setInputValues] = useState<LeftMenuInputValues>({
-    polygons: "arrows",
-    subjectFillType: "evenOdd",
-    clipFillType: "evenOdd",
-    clipTypeOperation: "xor",
-    polygon: "solution",
-    joinType: "square",
-    clean: null,
-    simplify: false,
-    lighten: null,
-    autoFix: false,
-    delta: -1,
-    miterLimit: 2,
-    scale: 100,
-    showSvgSource: false,
-    showEnlargedSvg: false,
-    bevel: false,
-  });
-  const [benchmarkRuns, setBenchmarkRuns] = useState<BenchmarkRun[]>([]);
-  const [explorerEnabled, setExplorerEnabled] = useState(true);
-  const [outputFormat, setOutputFormat] = useState(outputFormats[0]);
-  const [explorerRows, setExplorerRows] = useState<ExplorerRow[]>(readExplorerRows);
+  const [state, dispatch] = useReducer(
+    demoReducer,
+    undefined,
+    () => createInitialDemoState(readExplorerRows()),
+  );
 
   useEffect(() => {
     const explorer = document.getElementById("polygon_explorer_div");
     if (!explorer) return;
 
-    const observer = new MutationObserver(() => setExplorerRows(readExplorerRows()));
+    const observer = new MutationObserver(() => {
+      dispatch({ type: DemoActionType.ExplorerRowsChanged, payload: readExplorerRows() });
+    });
     observer.observe(explorer, { childList: true, characterData: true, subtree: true });
 
     return () => observer.disconnect();
   }, []);
 
   const handleChange = (value: LeftMenuInputValue, id: string) => {
-    setInputValues((currentValues) => ({ ...currentValues, [id]: value }));
+    dispatch({ type: DemoActionType.InputValueChanged, payload: { id, value } });
   };
 
   const handleRunBenchmark = (buttonId: string) => {
     const benchmark = benchmarkButtons.find(({ id }) => id === buttonId);
     if (!benchmark) return;
 
-    setBenchmarkRuns([{ mode: benchmark.mode, runs: benchmark.runs, status: "Running" }]);
+    dispatch({
+      type: DemoActionType.BenchmarkStarted,
+      payload: { mode: benchmark.mode, runs: benchmark.runs, status: "Running" },
+    });
     document.getElementById(buttonId)?.click();
   };
 
   const handleExplorerEnabledChange = (value: boolean) => {
-    setExplorerEnabled(value);
+    dispatch({ type: DemoActionType.ExplorerEnabledChanged, payload: value });
     const legacyControl = document.getElementById("explorer_enabled") as HTMLInputElement | null;
     if (!legacyControl) return;
 
@@ -91,7 +80,7 @@ export const App = () => {
     const selectedFormat = outputFormats.find(({ value }) => value === option.value);
     if (!selectedFormat) return;
 
-    setOutputFormat(selectedFormat);
+    dispatch({ type: DemoActionType.OutputFormatChanged, payload: selectedFormat });
     const legacyControl = document.getElementById("output_format") as HTMLSelectElement | null;
     if (!legacyControl) return;
 
@@ -114,29 +103,29 @@ export const App = () => {
       />
       <LeftMenu
         className={styles.leftMenu}
-        inputValues={inputValues}
+        inputValues={state.inputValues}
         onChange={handleChange}
       />
       <Canvas className={styles.canvas} />
       <RightMenu
         className={styles.rightMenu}
-        runs={benchmarkRuns}
+        runs={state.benchmarkRuns}
         onRunBenchmark={handleRunBenchmark}
       />
       <BottomMenu
         className={styles.bottomMenu}
-        enabled={explorerEnabled}
-        outputFormat={outputFormat}
+        enabled={state.explorerEnabled}
+        outputFormat={state.outputFormat}
         outputFormats={outputFormats}
-        rows={explorerRows}
+        rows={state.explorerRows}
         onEnabledChange={handleExplorerEnabledChange}
         onOutputFormatChange={handleOutputFormatChange}
       />
       <Container className={styles.footer}>Footer</Container>
-      {inputValues.showSvgSource && (
+      {state.inputValues.showSvgSource && (
         <SvgSourceModal onClose={() => handleChange(false, "showSvgSource")} />
       )}
-      {inputValues.showEnlargedSvg && (
+      {state.inputValues.showEnlargedSvg && (
         <EnlargedSvgModal onClose={() => handleChange(false, "showEnlargedSvg")} />
       )}
     </div>
