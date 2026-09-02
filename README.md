@@ -3,15 +3,31 @@ JsClipper
 
 A JavaScript library to perform boolean operations (union, difference etc...) between two SVG paths.
 
-Monorepo structure
-------------------
+Project structure
+-----------------
 
-- `packages/js-clipper` contains the reusable JavaScript library.
-- `apps/demo` contains the browser demo.
+The project is an npm-workspaces monorepo orchestrated with Turborepo.
 
-After installing dependencies with `npm install`, start the demo with `npm run dev`.
+- `packages/js-clipper` contains the reusable clipping library.
+- `apps/demo` contains the interactive browser demo.
 
-Online demo : http://delapouite.github.io/JsClipper/demo.html
+The demo has been migrated from the legacy DOM-driven implementation to React 18 and TypeScript. It is built with Vite and uses shared React components, typed application state, localisation, and automated tests.
+
+The old demo, jQuery, and other legacy browser dependencies have been removed. The current UI no longer relies on direct DOM manipulation or the former static demo files.
+
+Development
+-----------
+
+Install dependencies and start all development tasks:
+
+```sh
+npm install
+npm run dev
+```
+
+Useful repository-wide checks are `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`.
+
+Online demo: https://romankhorol.github.io/JsClipper/
 
 Original : http://sourceforge.net/projects/jsclipper
 
