@@ -23,7 +23,7 @@ th {
   padding: 0;
 }
 #p, #_p {
-  background-color: #FFF;
+  background-color: transparent;
   border: 2px solid #AAA;
 }
 .highlightedPath {

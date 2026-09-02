@@ -10,38 +10,38 @@
 
 .root {
   gap: spacings.$md;
+  min-height: 0;
+}
+
+.sectionRoot {
+  flex: 1;
+  min-height: 0;
 }
 
 .section {
   gap: spacings.$sm;
-}
-
-.title {
-  @include fontSizes.section-header;
-  margin: 0;
-  padding-bottom: spacings.$xs;
-  border-bottom: 1px solid colors.$primary-text;
+  flex: 1;
+  min-height: 0;
 }
 
 .source {
   @include fontSizes.text;
+  padding: spacings.$sm;
   width: 100%;
   min-height: 12rem;
   box-sizing: border-box;
   resize: vertical;
   color: colors.$primary-text;
-  background-color: colors.$background1;
   border: 1px solid colors.$background2;
+  min-height: 4rem;
+  resize: none;
+  background-color: colors.$background0;
+  border-radius: spacings.$sm;
 }
 
 .outputControls {
   display: flex;
   gap: spacings.$sm;
-}
-
-.source {
-  min-height: 4rem;
-  resize: none;
 }
 
 .select {
@@ -126,8 +126,8 @@
   }
 }
 
-.table {
+.area {
   @include fontSizes.text;
+  margin: 0;
   color: colors.$primary-text;
-  border: 1px solid colors.$background2;
 }

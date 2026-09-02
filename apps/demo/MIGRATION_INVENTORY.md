@@ -17,14 +17,14 @@ its automated checks pass. Do not replace all legacy DOM at once.
 
 | Area | Current React owner | Legacy runtime owner | Migration state |
 | --- | --- | --- | --- |
-| Application layout and local UI state | `src/App.tsx` | `src/demo.js` | React shell is in place; most values are not yet applied to clipping. |
+| Application layout and local UI state | `src/App.tsx` and `features/demo` | None | React is the runtime owner. |
 | Header | `src/Header` | Language/legacy page chrome | React-owned visually. |
-| Left menu | `src/LeftMenu` and shared input components | Polygon, clipping, offset, scale, and SVG option handlers | React controls currently update React state only. |
-| Canvas | `src/Canvas` | Raphael SVG creation and update flow | Placeholder React container; legacy renderer remains the source of truth. |
-| Right menu | `src/RightMenu` | Benchmark execution and result output | React starts legacy benchmark buttons; result model is temporary. |
-| Bottom menu | `src/BottomMenu` | Polygon explorer and output-format update flow | Explorer enablement and format selection bridge to legacy; rows are observed from legacy DOM. |
-| SVG dialogs | `src/SvgSourceModal`, `src/EnlargedSvgModal` | SVG source/enlarged SVG content | React visibility exists; content and rendering still need ownership. |
-| Polygon data | `src/features`, `src/utils/polygonFormat.ts` | Built-in, random, and custom polygon lifecycle | Formatting and storage boundaries exist; UI and runtime wiring remain. |
+| Left menu | `src/LeftMenu` and shared input components | None | React state drives the typed clipping pipeline. |
+| Canvas | `src/Canvas` | None | Typed React SVG renderer owns rendering, dialogs, and bevel. |
+| Right menu | `src/RightMenu`, `features/benchmark` | None | React owns execution, cancellation, progress, and CSV export. |
+| Bottom menu | `src/BottomMenu` | None | React owns explorer rows, formats, and area output. |
+| SVG dialogs | `src/SvgSourceModal`, `src/EnlargedSvgModal` | None | Receive generated React SVG source. |
+| Polygon data | `src/features/polygons` | Default custom polygon data only | Built-in, random, custom parsing, storage, and validation are React-owned. |
 
 ## Module boundaries
 
@@ -162,3 +162,9 @@ no feature relies on hidden legacy controls.
 - [ ] Parity tests cover the legacy behaviour being replaced.
 - [ ] Legacy markup, handlers, and temporary bridges for this module are removed.
 - [ ] The demo type check, lint, tests, and production build pass.
+
+## Current cleanup status
+
+- The React application no longer mounts legacy markup or executes legacy scripts.
+- `demo.html`, jQuery plugins, legacy formatter, Lodash math, and legacy RGBColor files were removed.
+- Default custom polygon data is stored in `src/features/polygons/defaultCustomPolygons.json`.

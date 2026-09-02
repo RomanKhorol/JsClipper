@@ -8,6 +8,11 @@ import {
   Section,
   StepperInput,
 } from "../components";
+import { polygonSources } from "../features/polygons/types";
+import CustomPolygonEditor from "../features/polygons/CustomPolygonEditor";
+import type { CustomPolygonSet, CustomPolygonSets } from "../features/polygons/customPolygons";
+import RandomPolygonEditor from "../features/polygons/RandomPolygonEditor";
+import type { RandomPolygonCounts } from "../features/polygons/randomPolygons";
 import styles from "./LeftMenu.module.scss";
 
 export type LeftMenuInputValue = string | number | boolean | null;
@@ -35,27 +40,43 @@ type LeftMenuProps = {
   className?: string;
   inputValues: LeftMenuInputValues;
   onChange: (value: LeftMenuInputValue, id: string) => void;
+  customPolygonSets: CustomPolygonSets;
+  selectedCustomPolygonIndex: number | null;
+  customPolygonDraft: CustomPolygonSet;
+  customPolygonError: string | null;
+  onCustomPolygonDraftChange: (field: keyof CustomPolygonSet, value: string) => void;
+  onCustomPolygonSelect: (index: number | null) => void;
+  onCustomPolygonSave: () => void;
+  onCustomPolygonDelete: () => void;
+  onCustomPolygonReset: () => void;
+  randomPolygonCounts: RandomPolygonCounts;
+  onRandomPolygonCountChange: (key: keyof RandomPolygonCounts, value: number) => void;
+  onGenerateRandomPolygons: () => void;
 };
 
-const polygonValues = [
-  "arrows",
-  "texts",
-  "rects",
-  "same",
-  "randomRectangles",
-  "random",
-  "starAndRect",
-  "spiral",
-  "gridAndStar",
-  "glyph",
-  "custom",
-];
+const polygonValues = polygonSources;
 const fillTypeValues = ["evenOdd", "nonZero"];
 const clipTypeValues = ["none", "intersect", "union", "difference", "xor"];
 const offsetPolygonValues = ["subject", "clip", "solution"];
 const joinTypeValues = ["square", "round", "miter"];
 
-const LeftMenu: FC<LeftMenuProps> = ({ className, inputValues, onChange }) => (
+const LeftMenu: FC<LeftMenuProps> = ({
+  className,
+  inputValues,
+  onChange,
+  customPolygonSets,
+  selectedCustomPolygonIndex,
+  customPolygonDraft,
+  customPolygonError,
+  onCustomPolygonDraftChange,
+  onCustomPolygonSelect,
+  onCustomPolygonSave,
+  onCustomPolygonDelete,
+  onCustomPolygonReset,
+  randomPolygonCounts,
+  onRandomPolygonCountChange,
+  onGenerateRandomPolygons,
+}) => (
     <Container className={classNames(styles.root, className)}>
       <Section sectionId="polygons">
         <RadioGroup
@@ -66,6 +87,26 @@ const LeftMenu: FC<LeftMenuProps> = ({ className, inputValues, onChange }) => (
           values={polygonValues}
         />
       </Section>
+      {inputValues.polygons === "custom" && (
+        <CustomPolygonEditor
+          value={customPolygonDraft}
+          polygonSets={customPolygonSets}
+          selectedIndex={selectedCustomPolygonIndex}
+          error={customPolygonError}
+          onValueChange={onCustomPolygonDraftChange}
+          onSelect={onCustomPolygonSelect}
+          onSave={onCustomPolygonSave}
+          onDelete={onCustomPolygonDelete}
+          onReset={onCustomPolygonReset}
+        />
+      )}
+      {(inputValues.polygons === "randomRectangles" || inputValues.polygons === "random") && (
+        <RandomPolygonEditor
+          counts={randomPolygonCounts}
+          onCountChange={onRandomPolygonCountChange}
+          onGenerate={onGenerateRandomPolygons}
+        />
+      )}
       <Section sectionId="subjectFillType">
         <RadioGroup
           id="subjectFillType"

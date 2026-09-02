@@ -1,0 +1,36 @@
+@use "../../colors" as colors;
+@use "../../fontSizes" as fontSizes;
+@use "../../spacings" as spacings;
+
+.container {
+  flex: 0 1 auto;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  background-color: colors.$background0;
+  border-radius: spacings.$sm;
+}
+
+.table {
+  @include fontSizes.text;
+  color: colors.$primary-text;
+  border: 1px solid colors.$background2;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  padding: spacings.$sm;
+  margin: 2px !important;
+  background-color: colors.$background2;
+  border-radius: spacings.$sm;
+
+  &:first-child {
+    margin-left: 4px !important;
+  }
+}

@@ -15,6 +15,9 @@
 }
 
 .button {
+  width: fit-content;
+  padding: spacings.$sm;
+  box-sizing: border-box;
   border: none;
   text-transform: capitalize;
   font-weight: bold;

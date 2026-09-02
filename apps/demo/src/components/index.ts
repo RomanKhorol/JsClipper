@@ -7,3 +7,5 @@ export { CheckboxWithInput } from "./CheckboxWithInput";
 export { StepperInput } from "./StepperInput";
 export { NumberInput } from "./NumberInput";
 export { Modal } from "./Modal";
+export { DataTable } from "./DataTable";
+export type { DataTableColumnConfig } from "./DataTable";

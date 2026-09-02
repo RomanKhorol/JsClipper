@@ -1,6 +1,27 @@
 @use "../colors" as colors;
 
 .root {
-  min-height: 20rem;
-  background-color: colors.$background1;
+  // Make transparent parts of the SVG distinguishable without a bright white
+  // canvas behind them.
+  background-color: #5f6361;
+  background-image:
+    linear-gradient(45deg, #535755 25%, transparent 25%),
+    linear-gradient(-45deg, #535755 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #535755 75%),
+    linear-gradient(-45deg, transparent 75%, #535755 75%);
+  background-position: 0 0, 0 1rem, 1rem -1rem, -1rem 0;
+  background-size: 2rem 2rem;
+}
+
+.svg {
+  :global(#p) {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100dvh - 22rem);
+    height: auto;
+  }
+}
+
+.empty {
+  margin: 0;
 }

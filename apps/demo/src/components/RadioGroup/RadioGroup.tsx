@@ -5,7 +5,7 @@ import RadioItem from "./RadioItem/RadioItem";
 import { useTranslation } from "react-i18next";
 
 type RadioGroupProps = {
-  values: string[];
+  values: readonly string[];
   value: string;
   onChange(value: string, id: string): void;
   id: string;

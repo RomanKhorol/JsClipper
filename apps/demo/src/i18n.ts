@@ -52,7 +52,7 @@ i18n.use(initReactI18next).init({
           misc: { title: "Misc" },
         },
         bottomMenu: {
-          polygonExplorer: { enabled: "Enable Explorer" },
+          polygonExplorer: { title: "Polygon explorer", enabled: "Enable Explorer" },
         },
       },
     },
@@ -155,8 +155,51 @@ const checkboxTranslations = {
   },
 };
 
+const bottomMenuTableTranslations = {
+  en: { table: { type: "Type", polygons: "Polys", points: "Points", pointsInPolygons: "Points in subpolygons" } },
+  uk: { table: { type: "Тип", polygons: "Полігони", points: "Точки", pointsInPolygons: "Точки в підполігонах" } },
+  de: { table: { type: "Typ", polygons: "Polygone", points: "Punkte", pointsInPolygons: "Punkte in Teilpolygonen" } },
+  pl: { table: { type: "Typ", polygons: "Wielokąty", points: "Punkty", pointsInPolygons: "Punkty w podwielokątach" } },
+};
+
+const bottomMenuTranslations = {
+  uk: { polygonExplorer: { title: "Перегляд полігонів", enabled: "Увімкнути перегляд" } },
+  de: { polygonExplorer: { title: "Polygon-Explorer", enabled: "Explorer aktivieren" } },
+  pl: { polygonExplorer: { title: "Eksplorator wielokątów", enabled: "Włącz eksplorator" } },
+};
+
+const benchmarkTableTranslations = {
+  en: { table: { mode: "Mode", runs: "Runs", status: "Status", progress: "Progress", duration: "ms" } },
+  uk: { table: { mode: "Режим", runs: "Запуски", status: "Статус", progress: "Прогрес", duration: "мс" } },
+  de: { table: { mode: "Modus", runs: "Läufe", status: "Status", progress: "Fortschritt", duration: "ms" } },
+  pl: { table: { mode: "Tryb", runs: "Uruchomienia", status: "Status", progress: "Postęp", duration: "ms" } },
+};
+
+const rightMenuTranslations = {
+  en: { benchmark: { title: "Benchmark" }, benchmarkResults: { title: "Benchmark results" }, actions: { benchmark1: "Run NB", benchmark1b: "Run NB 5x", benchmark2: "Run BIB", benchmark2b: "Run BIB 5x", stop: "Stop", exportCsv: "Export CSV" }, empty: "No benchmark results yet.", mode: { Normal: "Normal", "Big Integer": "Big Integer" }, status: { Running: "Running", Completed: "Completed", Cancelled: "Cancelled", Failed: "Failed" } },
+  uk: { benchmark: { title: "Тестування" }, benchmarkResults: { title: "Результати тестування" }, actions: { benchmark1: "Запустити NB", benchmark1b: "Запустити NB 5×", benchmark2: "Запустити BIB", benchmark2b: "Запустити BIB 5×", stop: "Зупинити", exportCsv: "Експортувати CSV" }, empty: "Результатів тестування ще немає.", mode: { Normal: "Звичайний", "Big Integer": "Великі цілі" }, status: { Running: "Виконується", Completed: "Завершено", Cancelled: "Скасовано", Failed: "Помилка" } },
+  de: { benchmark: { title: "Benchmark" }, benchmarkResults: { title: "Benchmark-Ergebnisse" }, actions: { benchmark1: "NB starten", benchmark1b: "NB 5× starten", benchmark2: "BIB starten", benchmark2b: "BIB 5× starten", stop: "Stopp", exportCsv: "CSV exportieren" }, empty: "Noch keine Benchmark-Ergebnisse.", mode: { Normal: "Normal", "Big Integer": "Große Ganzzahlen" }, status: { Running: "Läuft", Completed: "Abgeschlossen", Cancelled: "Abgebrochen", Failed: "Fehlgeschlagen" } },
+  pl: { benchmark: { title: "Test porównawczy" }, benchmarkResults: { title: "Wyniki testu" }, actions: { benchmark1: "Uruchom NB", benchmark1b: "Uruchom NB 5×", benchmark2: "Uruchom BIB", benchmark2b: "Uruchom BIB 5×", stop: "Zatrzymaj", exportCsv: "Eksportuj CSV" }, empty: "Brak wyników testu.", mode: { Normal: "Normalny", "Big Integer": "Duże liczby całkowite" }, status: { Running: "W toku", Completed: "Zakończono", Cancelled: "Anulowano", Failed: "Niepowodzenie" } },
+};
+
 Object.entries(checkboxTranslations).forEach(([language, leftMenu]) => {
   i18n.addResourceBundle(language, "translation", { leftMenu }, true, true);
+});
+
+Object.entries(bottomMenuTableTranslations).forEach(([language, bottomMenu]) => {
+  i18n.addResourceBundle(language, "translation", { bottomMenu }, true, true);
+});
+
+Object.entries(bottomMenuTranslations).forEach(([language, bottomMenu]) => {
+  i18n.addResourceBundle(language, "translation", { bottomMenu }, true, true);
+});
+
+Object.entries(benchmarkTableTranslations).forEach(([language, rightMenu]) => {
+  i18n.addResourceBundle(language, "translation", { rightMenu }, true, true);
+});
+
+Object.entries(rightMenuTranslations).forEach(([language, rightMenu]) => {
+  i18n.addResourceBundle(language, "translation", { rightMenu }, true, true);
 });
 
 export default i18n;

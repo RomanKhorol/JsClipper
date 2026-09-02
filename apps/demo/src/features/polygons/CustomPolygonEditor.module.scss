@@ -1,0 +1,51 @@
+@use "../../colors" as colors;
+@use "../../fontSizes" as fontSizes;
+@use "../../spacings" as spacings;
+
+.root,
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.root {
+  gap: spacings.$sm;
+}
+
+.title {
+  @include fontSizes.text;
+  margin: 0;
+  color: colors.$primary-text;
+}
+
+.field {
+  @include fontSizes.label;
+  gap: spacings.$xxs;
+  color: colors.$secondary-text;
+}
+
+.field select,
+.field textarea {
+  @include fontSizes.text;
+  box-sizing: border-box;
+  color: colors.$primary-text;
+  background-color: colors.$background0;
+  border: 1px solid colors.$background1;
+  border-radius: spacings.$xxs;
+}
+
+.field textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+.error {
+  @include fontSizes.label;
+  color: colors.$secondary-action;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacings.$xs;
+}

@@ -1,63 +1,130 @@
 import { type FC } from "react";
-import { Column, Table } from "react-virtualized";
+import { useTranslation } from "react-i18next";
 import classNames from "classnames";
-import { Button, Container } from "../components";
+import {
+  Button,
+  Container,
+  DataTable,
+  Section,
+  type DataTableColumnConfig,
+} from "../components";
+import {
+  benchmarkDefinitions,
+  downloadBenchmarkRuns,
+  type BenchmarkRun,
+} from "../features/benchmark";
 import styles from "./RightMenu.module.scss";
-
-export type BenchmarkRun = {
-  mode: string;
-  runs: string;
-  status: string;
-};
-
-export const benchmarkButtons = [
-  { id: "benchmark1", label: "Run NB", mode: "Normal", runs: "1" },
-  { id: "benchmark1b", label: "Run NB 5x", mode: "Normal", runs: "5" },
-  { id: "benchmark2", label: "Run BIB", mode: "Big Integer", runs: "1" },
-  { id: "benchmark2b", label: "Run BIB 5x", mode: "Big Integer", runs: "5" },
-];
 
 type RightMenuProps = {
   className?: string;
   runs: BenchmarkRun[];
-  onRunBenchmark: (buttonId: string) => void;
+  onRunBenchmark: (buttonId: BenchmarkRun["id"]) => void;
+  onCancelBenchmark: () => void;
 };
 
-const RightMenu: FC<RightMenuProps> = ({ className, runs, onRunBenchmark }) => (
-  <Container className={classNames(styles.root, className)}>
-    <section className={styles.section}>
-      <h2 className={styles.title}>Benchmark</h2>
-      <div className={styles.actions}>
-        {benchmarkButtons.map((button) => (
+const benchmarkColumns = (
+  t: (key: string) => string,
+): DataTableColumnConfig<BenchmarkRun>[] => [
+  {
+    dataKey: "mode",
+    width: 120,
+    flexGrow: 1.5,
+    labelLocaleKey: "rightMenu.table.mode",
+    formatCell: (value) => t(`rightMenu.mode.${value}`),
+  },
+  {
+    dataKey: "runs",
+    width: 64,
+    flexGrow: 1,
+    labelLocaleKey: "rightMenu.table.runs",
+  },
+  {
+    dataKey: "status",
+    width: 136,
+    flexGrow: 1.5,
+    labelLocaleKey: "rightMenu.table.status",
+    formatCell: (value) => t(`rightMenu.status.${value}`),
+  },
+  {
+    dataKey: "completed",
+    width: 96,
+    flexGrow: 1,
+    labelLocaleKey: "rightMenu.table.progress",
+  },
+  {
+    dataKey: "durationMs",
+    width: 64,
+    flexGrow: 1,
+    labelLocaleKey: "rightMenu.table.duration",
+  },
+];
+
+const RightMenu: FC<RightMenuProps> = ({
+  className,
+  runs,
+  onRunBenchmark,
+  onCancelBenchmark,
+}) => {
+  const { t } = useTranslation();
+  const activeRun = runs.find(({ status }) => status === "Running");
+  return (
+    <Container className={classNames(styles.root, className)}>
+      <Section
+        sectionId="benchmark"
+        localePrefix="rightMenu"
+        className={styles.section}
+      >
+        <div className={styles.actions}>
+          {benchmarkDefinitions.map((button) => (
+            <Button
+              key={button.id}
+              label={
+                activeRun?.id === button.id
+                  ? t("rightMenu.actions.stop")
+                  : t(`rightMenu.actions.${button.id}`)
+              }
+              onClick={() =>
+                activeRun?.id === button.id
+                  ? onCancelBenchmark()
+                  : onRunBenchmark(button.id)
+              }
+              disabled={Boolean(activeRun && activeRun.id !== button.id)}
+            />
+          ))}
+        </div>
+      </Section>
+      <Section
+        sectionId="benchmarkResults"
+        localePrefix="rightMenu"
+        className={styles.section}
+      >
+        {runs.length ? (
+          <>
+            <DataTable
+              columnConfig={benchmarkColumns(t)}
+              rows={runs}
+              onRowClick={() => undefined}
+              className={styles.tableContainer}
+            />
+            <Button
+              label={t("rightMenu.actions.exportCsv")}
+              variant="secondary"
+              onClick={() => downloadBenchmarkRuns(runs)}
+            />
+          </>
+        ) : (
+          <div className={styles.empty}>{t("rightMenu.empty")}</div>
+        )}
+        {/* {runs.length > 0 && (
           <Button
-            key={button.id}
-            label={button.label}
-            onClick={() => onRunBenchmark(button.id)}
+            label={t("rightMenu.actions.exportCsv")}
+            variant="secondary"
+            onClick={() => downloadBenchmarkRuns(runs)}
           />
-        ))}
-      </div>
-    </section>
-    <section className={styles.section}>
-      <h2 className={styles.title}>Benchmark results</h2>
-      {runs.length ? (
-        <Table
-          className={styles.table}
-          width={320}
-          height={96}
-          headerHeight={32}
-          rowHeight={32}
-          rowCount={runs.length}
-          rowGetter={({ index }) => runs[index]}
-        >
-          <Column label="Mode" dataKey="mode" width={120} />
-          <Column label="Runs" dataKey="runs" width={64} />
-          <Column label="Status" dataKey="status" width={136} />
-        </Table>
-      ) : (
-        <div className={styles.empty}>No benchmark results yet.</div>
-      )}
-    </section>
-  </Container>
-);
+        )} */}
+      </Section>
+    </Container>
+  );
+};
 
 export default RightMenu;

@@ -2,97 +2,57 @@
  * Reserved React mount point. The legacy demo renders before this root so new
  * React features can be introduced beside it without replacing legacy DOM.
  */
-import { useEffect, useReducer } from "react";
 import { useTranslation } from "react-i18next";
+import { BottomMenu } from "./BottomMenu";
+import { Canvas, createSvgMarkup } from "./Canvas";
 import { Container } from "./components";
-import { Canvas } from "./Canvas";
-import styles from "./App.module.scss";
+import { EnlargedSvgModal } from "./EnlargedSvgModal";
+import { useDemoController } from "./features/demo/useDemoController";
 import { Header } from "./Header";
 import "./i18n";
-import { LeftMenu, type LeftMenuInputValue } from "./LeftMenu";
-import { BottomMenu, type ExplorerRow } from "./BottomMenu";
-import { EnlargedSvgModal } from "./EnlargedSvgModal";
+import { LeftMenu } from "./LeftMenu";
+import styles from "./App.module.scss";
+import { RightMenu } from "./RightMenu";
 import { SvgSourceModal } from "./SvgSourceModal";
-import { benchmarkButtons, RightMenu } from "./RightMenu";
-import { createInitialDemoState, demoReducer, outputFormats } from "./features/demo/reducer";
-import { DemoActionType } from "./features/demo/types";
 
 const languages = ["en", "uk", "de", "pl"] as const;
 
-const readExplorerRows = (): ExplorerRow[] => {
-  const value = (id: string) => document.getElementById(id)?.textContent?.trim() || "—";
-
-  return [
-    { type: "Subject", polygons: value("subj_subpolygons"), points: value("subj_points_total"), pointsInPolygons: value("subj_points_in_subpolygons") },
-    { type: "Clip", polygons: value("clip_subpolygons"), points: value("clip_points_total"), pointsInPolygons: value("clip_points_in_subpolygons") },
-    { type: "Solution", polygons: value("solution_subpolygons"), points: value("solution_points_total"), pointsInPolygons: value("solution_points_in_subpolygons") },
-    { type: "Total", polygons: value("all_subpolygons"), points: value("points_total"), pointsInPolygons: "—" },
-  ];
-};
-
 export const App = () => {
   const { i18n } = useTranslation();
-  const [state, dispatch] = useReducer(
-    demoReducer,
-    undefined,
-    () => createInitialDemoState(readExplorerRows()),
-  );
-
-  useEffect(() => {
-    const explorer = document.getElementById("polygon_explorer_div");
-    if (!explorer) return;
-
-    const observer = new MutationObserver(() => {
-      dispatch({ type: DemoActionType.ExplorerRowsChanged, payload: readExplorerRows() });
-    });
-    observer.observe(explorer, { childList: true, characterData: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const handleChange = (value: LeftMenuInputValue, id: string) => {
-    dispatch({ type: DemoActionType.InputValueChanged, payload: { id, value } });
-  };
-
-  const handleRunBenchmark = (buttonId: string) => {
-    const benchmark = benchmarkButtons.find(({ id }) => id === buttonId);
-    if (!benchmark) return;
-
-    dispatch({
-      type: DemoActionType.BenchmarkStarted,
-      payload: { mode: benchmark.mode, runs: benchmark.runs, status: "Running" },
-    });
-    document.getElementById(buttonId)?.click();
-  };
-
-  const handleExplorerEnabledChange = (value: boolean) => {
-    dispatch({ type: DemoActionType.ExplorerEnabledChanged, payload: value });
-    const legacyControl = document.getElementById("explorer_enabled") as HTMLInputElement | null;
-    if (!legacyControl) return;
-
-    legacyControl.checked = value;
-    legacyControl.dispatchEvent(new Event("change", { bubbles: true }));
-  };
-
-  const handleOutputFormatChange = (option: unknown) => {
-    if (!option || typeof option !== "object" || !("value" in option)) return;
-
-    const selectedFormat = outputFormats.find(({ value }) => value === option.value);
-    if (!selectedFormat) return;
-
-    dispatch({ type: DemoActionType.OutputFormatChanged, payload: selectedFormat });
-    const legacyControl = document.getElementById("output_format") as HTMLSelectElement | null;
-    if (!legacyControl) return;
-
-    legacyControl.value = selectedFormat.value;
-    legacyControl.dispatchEvent(new Event("change", { bubbles: true }));
-  };
+  const {
+    state,
+    outputFormats,
+    handleInputValueChange,
+    handleRunBenchmark,
+    handleCancelBenchmark,
+    handleExplorerEnabledChange,
+    handleOutputFormatChange,
+    handleCustomPolygonDraftChange,
+    handleCustomPolygonSelect,
+    handleCustomPolygonSave,
+    handleCustomPolygonDelete,
+    handleCustomPolygonReset,
+    handleRandomPolygonCountChange,
+    handleGenerateRandomPolygons,
+    handleSelection,
+  } = useDemoController();
 
   const onToogleLanguege = () => {
-    const languageIndex = languages.indexOf(i18n.language as (typeof languages)[number]);
+    const languageIndex = languages.indexOf(
+      i18n.language as (typeof languages)[number],
+    );
     const nextLanguage = languages[(languageIndex + 1) % languages.length];
     void i18n.changeLanguage(nextLanguage);
   };
+
+  const svgSource = state.calculationResult
+    ? createSvgMarkup(
+        state.calculationResult,
+        state.inputValues.scale,
+        state.inputValues.subjectFillType === "nonZero" ? "nonZero" : "evenOdd",
+        state.inputValues.clipFillType === "nonZero" ? "nonZero" : "evenOdd",
+      )
+    : "";
 
   return (
     <div className={styles.root}>
@@ -104,13 +64,40 @@ export const App = () => {
       <LeftMenu
         className={styles.leftMenu}
         inputValues={state.inputValues}
-        onChange={handleChange}
+        onChange={handleInputValueChange}
+        customPolygonSets={state.customPolygonSets}
+        selectedCustomPolygonIndex={state.selectedCustomPolygonIndex}
+        customPolygonDraft={state.customPolygonDraft}
+        customPolygonError={state.customPolygonError}
+        onCustomPolygonDraftChange={handleCustomPolygonDraftChange}
+        onCustomPolygonSelect={handleCustomPolygonSelect}
+        onCustomPolygonSave={handleCustomPolygonSave}
+        onCustomPolygonDelete={handleCustomPolygonDelete}
+        onCustomPolygonReset={handleCustomPolygonReset}
+        randomPolygonCounts={state.randomPolygonCounts}
+        onRandomPolygonCountChange={handleRandomPolygonCountChange}
+        onGenerateRandomPolygons={handleGenerateRandomPolygons}
       />
-      <Canvas className={styles.canvas} />
+      <Canvas
+        className={styles.canvas}
+        result={state.calculationResult}
+        scale={state.inputValues.scale}
+        subjectFillType={
+          state.inputValues.subjectFillType === "nonZero"
+            ? "nonZero"
+            : "evenOdd"
+        }
+        clipFillType={
+          state.inputValues.clipFillType === "nonZero" ? "nonZero" : "evenOdd"
+        }
+        bevel={state.inputValues.bevel}
+        selection={state.hoveredPolygon ?? state.selectedPolygon}
+      />
       <RightMenu
         className={styles.rightMenu}
         runs={state.benchmarkRuns}
         onRunBenchmark={handleRunBenchmark}
+        onCancelBenchmark={handleCancelBenchmark}
       />
       <BottomMenu
         className={styles.bottomMenu}
@@ -118,15 +105,23 @@ export const App = () => {
         outputFormat={state.outputFormat}
         outputFormats={outputFormats}
         rows={state.explorerRows}
+        result={state.calculationResult}
         onEnabledChange={handleExplorerEnabledChange}
         onOutputFormatChange={handleOutputFormatChange}
+        onSelection={handleSelection}
       />
       <Container className={styles.footer}>Footer</Container>
       {state.inputValues.showSvgSource && (
-        <SvgSourceModal onClose={() => handleChange(false, "showSvgSource")} />
+        <SvgSourceModal
+          source={svgSource}
+          onClose={() => handleInputValueChange(false, "showSvgSource")}
+        />
       )}
       {state.inputValues.showEnlargedSvg && (
-        <EnlargedSvgModal onClose={() => handleChange(false, "showEnlargedSvg")} />
+        <EnlargedSvgModal
+          source={svgSource}
+          onClose={() => handleInputValueChange(false, "showEnlargedSvg")}
+        />
       )}
     </div>
   );

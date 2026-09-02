@@ -1,0 +1,11 @@
+@use "../../colors" as colors;
+@use "../../fontSizes" as fontSizes;
+@use "../../spacings" as spacings;
+
+.root {
+  background-color: colors.$primary-action;
+  padding: spacings.$xxs spacings.$sm;
+  width: fit-content;
+  border-radius: spacings.$md;
+  cursor: help;
+}

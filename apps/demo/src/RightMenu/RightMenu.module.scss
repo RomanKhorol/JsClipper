@@ -16,23 +16,14 @@
   gap: spacings.$sm;
 }
 
-.title {
-  @include fontSizes.section-header;
-  margin: 0;
-  padding-bottom: spacings.$xs;
-  border-bottom: 1px solid colors.$primary-text;
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: spacings.$xs;
 }
 
-.table {
-  @include fontSizes.text;
-  color: colors.$primary-text;
-  border: 1px solid colors.$background2;
+.tableContainer {
+  max-height: 8rem;
 }
 
 .empty {
