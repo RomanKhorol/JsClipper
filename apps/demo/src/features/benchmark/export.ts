@@ -1,15 +1,29 @@
 import type { BenchmarkRun } from "./benchmark";
+export { benchmarkRunsToCsv } from "./csv";
 
-const csvCell = (value: string | number | undefined): string =>
-  `"${String(value ?? "").replaceAll('"', '""')}"`;
+const serializeBenchmarkRuns = (runs: BenchmarkRun[]): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const worker = new Worker(
+      new URL("./benchmarkCsv.worker.ts", import.meta.url),
+      { type: "module" },
+    );
 
-export const benchmarkRunsToCsv = (runs: BenchmarkRun[]): string => [
-  ["Mode", "Runs", "Status", "Completed", "Total", "Duration (ms)", "Error"].map(csvCell).join(","),
-  ...runs.map((run) => [run.mode, run.runs, run.status, run.completed, run.total, run.durationMs, run.error].map(csvCell).join(",")),
-].join("\n");
+    worker.onmessage = ({ data }: MessageEvent<string>) => {
+      worker.terminate();
+      resolve(data);
+    };
+    worker.onerror = (event) => {
+      worker.terminate();
+      reject(new Error(event.message || "Unable to create benchmark CSV."));
+    };
+    worker.postMessage({ runs });
+  });
 
-export const downloadBenchmarkRuns = (runs: BenchmarkRun[]): void => {
-  const blob = new Blob([benchmarkRunsToCsv(runs)], { type: "text/csv;charset=utf-8" });
+export const downloadBenchmarkRuns = async (
+  runs: BenchmarkRun[],
+): Promise<void> => {
+  const csv = await serializeBenchmarkRuns(runs);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

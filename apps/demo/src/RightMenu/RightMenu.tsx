@@ -109,7 +109,7 @@ const RightMenu: FC<RightMenuProps> = ({
             <Button
               label={t("rightMenu.actions.exportCsv")}
               variant="secondary"
-              onClick={() => downloadBenchmarkRuns(runs)}
+              onClick={() => void downloadBenchmarkRuns(runs)}
             />
           </>
         ) : (
