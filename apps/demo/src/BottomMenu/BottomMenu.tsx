@@ -1,6 +1,6 @@
-import { type FC, useCallback, useEffect, useState } from "react";
+import { type FC, memo, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import classNames from "classnames";
-import WindowedSelect from "react-windowed-select/dist/main.js";
 import {
   Checkbox,
   Container,
@@ -18,6 +18,7 @@ import styles from "./BottomMenu.module.scss";
 import { PointsCell, SubPoligonsCell } from "./custom-cells";
 import { TableContext } from "./constants";
 import { PolygonCellData } from "../types";
+import OutputControls from "./OutputControls";
 
 export type ExplorerRow = {
   id: ExplorerPolygonId | "total";
@@ -94,6 +95,7 @@ const BottomMenu: FC<BottomMenuProps> = ({
   onOutputFormatChange,
   onSelection,
 }) => {
+  const { t } = useTranslation();
   const [selectedRow, setSelectedRow] = useState<
     ExplorerPolygonId | "total" | null
   >(null);
@@ -105,8 +107,8 @@ const BottomMenu: FC<BottomMenuProps> = ({
   const source =
     polygons && isPolygonOutputFormat(outputFormat.value)
       ? formatPolygonOutput(polygons, outputFormat.value)
-      : "Click a polygon row to view coordinates.";
-  const area = polygons ? `Area: ${polygonsArea(polygons)}` : "";
+      : t("bottomMenu.output.selectPolygon");
+  const area = polygons ? t("bottomMenu.output.area", { area: polygonsArea(polygons) }) : "";
   const rowsToShow = enabled ? rows : [];
 
   return (
@@ -123,22 +125,14 @@ const BottomMenu: FC<BottomMenuProps> = ({
           value={enabled}
           onChange={onEnabledChange}
         />
-        <div className={styles.outputControls}>
-          <textarea
-            className={styles.source}
-            readOnly
-            value={enabled ? source : "Polygon explorer is disabled."}
-          />
-          <WindowedSelect
-            className={styles.select}
-            classNamePrefix="virtualized-dropdown"
-            value={outputFormat}
-            options={outputFormats}
-            onChange={onOutputFormatChange}
-            isSearchable={false}
-            windowThreshold={100}
-          />
-        </div>
+        <OutputControls
+          enabled={enabled}
+          source={source}
+          disabledMessage={t("bottomMenu.output.disabled")}
+          outputFormat={outputFormat}
+          outputFormats={outputFormats}
+          onOutputFormatChange={onOutputFormatChange}
+        />
         <TableContext.Provider value={{ onSelection }}>
           <DataTable
             columnConfig={explorerColumns}
@@ -152,4 +146,4 @@ const BottomMenu: FC<BottomMenuProps> = ({
   );
 };
 
-export default BottomMenu;
+export default memo(BottomMenu);

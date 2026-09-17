@@ -202,4 +202,51 @@ Object.entries(rightMenuTranslations).forEach(([language, rightMenu]) => {
   i18n.addResourceBundle(language, "translation", { rightMenu }, true, true);
 });
 
+const additionalTranslations = {
+  en: {
+    app: { footer: "Footer" },
+    canvas: { preparing: "Preparing polygons…", polygonResult: "Polygon result" },
+    modals: { close: "Close", svgSource: { title: "SVG source" }, enlargedSvg: { title: "Enlarged SVG" } },
+    bottomMenu: { output: { selectPolygon: "Click a polygon row to view coordinates.", disabled: "Polygon explorer is disabled.", area: "Area: {{area}}" } },
+    leftMenu: {
+      customEditor: { title: "Custom polygons", savedSet: "Saved set", defaultSet: "Default", set: "Set {{index}}", subject: "Subject", clip: "Clip", save: "Save", update: "Update", delete: "Delete", reset: "Reset", invalidPolygons: "Subject and clip must contain valid polygons.", storageError: "Unable to save custom polygons in local storage." },
+      randomEditor: { title: "Random polygons", subjPolygonCount: "Subject polygon count", subjPointCount: "Subject point count", clipPolygonCount: "Clip polygon count", clipPointCount: "Clip point count", generate: "Generate" },
+    },
+  },
+  uk: {
+    app: { footer: "Нижній колонтитул" },
+    canvas: { preparing: "Підготовка полігонів…", polygonResult: "Результат полігонів" },
+    modals: { close: "Закрити", svgSource: { title: "Код SVG" }, enlargedSvg: { title: "Збільшене SVG" } },
+    bottomMenu: { output: { selectPolygon: "Натисніть рядок полігона, щоб переглянути координати.", disabled: "Перегляд полігонів вимкнено.", area: "Площа: {{area}}" } },
+    leftMenu: {
+      customEditor: { title: "Власні полігони", savedSet: "Збережений набір", defaultSet: "Типовий", set: "Набір {{index}}", subject: "Суб’єкт", clip: "Відсікач", save: "Зберегти", update: "Оновити", delete: "Видалити", reset: "Скинути", invalidPolygons: "Суб’єкт і відсікач мають містити коректні полігони.", storageError: "Не вдалося зберегти власні полігони в локальному сховищі." },
+      randomEditor: { title: "Випадкові полігони", subjPolygonCount: "Кількість полігонів суб’єкта", subjPointCount: "Кількість точок суб’єкта", clipPolygonCount: "Кількість полігонів відсікача", clipPointCount: "Кількість точок відсікача", generate: "Згенерувати" },
+    },
+  },
+  de: {
+    app: { footer: "Fußzeile" },
+    canvas: { preparing: "Polygone werden vorbereitet…", polygonResult: "Polygonergebnis" },
+    modals: { close: "Schließen", svgSource: { title: "SVG-Quelle" }, enlargedSvg: { title: "Vergrößertes SVG" } },
+    bottomMenu: { output: { selectPolygon: "Klicken Sie auf eine Polygonzeile, um die Koordinaten anzuzeigen.", disabled: "Polygon-Explorer ist deaktiviert.", area: "Fläche: {{area}}" } },
+    leftMenu: {
+      customEditor: { title: "Benutzerdefinierte Polygone", savedSet: "Gespeicherter Satz", defaultSet: "Standard", set: "Satz {{index}}", subject: "Subjekt", clip: "Schnittform", save: "Speichern", update: "Aktualisieren", delete: "Löschen", reset: "Zurücksetzen", invalidPolygons: "Subjekt und Schnittform müssen gültige Polygone enthalten.", storageError: "Benutzerdefinierte Polygone konnten nicht im lokalen Speicher gespeichert werden." },
+      randomEditor: { title: "Zufallspolygone", subjPolygonCount: "Anzahl Subjektpolygone", subjPointCount: "Anzahl Subjektpunkte", clipPolygonCount: "Anzahl Schnittformpolygone", clipPointCount: "Anzahl Schnittformpunkte", generate: "Generieren" },
+    },
+  },
+  pl: {
+    app: { footer: "Stopka" },
+    canvas: { preparing: "Przygotowywanie wielokątów…", polygonResult: "Wynik wielokątów" },
+    modals: { close: "Zamknij", svgSource: { title: "Źródło SVG" }, enlargedSvg: { title: "Powiększone SVG" } },
+    bottomMenu: { output: { selectPolygon: "Kliknij wiersz wielokąta, aby wyświetlić współrzędne.", disabled: "Eksplorator wielokątów jest wyłączony.", area: "Pole: {{area}}" } },
+    leftMenu: {
+      customEditor: { title: "Własne wielokąty", savedSet: "Zapisany zestaw", defaultSet: "Domyślny", set: "Zestaw {{index}}", subject: "Obiekt", clip: "Przycinanie", save: "Zapisz", update: "Aktualizuj", delete: "Usuń", reset: "Resetuj", invalidPolygons: "Obiekt i przycinanie muszą zawierać prawidłowe wielokąty.", storageError: "Nie można zapisać własnych wielokątów w pamięci lokalnej." },
+      randomEditor: { title: "Losowe wielokąty", subjPolygonCount: "Liczba wielokątów obiektu", subjPointCount: "Liczba punktów obiektu", clipPolygonCount: "Liczba wielokątów przycinania", clipPointCount: "Liczba punktów przycinania", generate: "Generuj" },
+    },
+  },
+};
+
+Object.entries(additionalTranslations).forEach(([language, translation]) => {
+  i18n.addResourceBundle(language, "translation", translation, true, true);
+});
+
 export default i18n;

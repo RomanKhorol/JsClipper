@@ -18,7 +18,7 @@ import { SvgSourceModal } from "./SvgSourceModal";
 const languages = ["en", "uk", "de", "pl"] as const;
 
 export const App = () => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const {
     state,
     outputFormats,
@@ -51,6 +51,9 @@ export const App = () => {
         state.inputValues.scale,
         state.inputValues.subjectFillType === "nonZero" ? "nonZero" : "evenOdd",
         state.inputValues.clipFillType === "nonZero" ? "nonZero" : "evenOdd",
+        false,
+        null,
+        t("canvas.polygonResult"),
       )
     : "";
 
@@ -110,7 +113,7 @@ export const App = () => {
         onOutputFormatChange={handleOutputFormatChange}
         onSelection={handleSelection}
       />
-      <Container className={styles.footer}>Footer</Container>
+      <Container className={styles.footer}>{t("app.footer")}</Container>
       {state.inputValues.showSvgSource && (
         <SvgSourceModal
           source={svgSource}

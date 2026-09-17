@@ -8,6 +8,7 @@ type IconButtonProps = {
   onClick: MouseEventHandler<HTMLButtonElement>;
   id: string;
   disabled?: boolean;
+  ariaLabel?: string;
 };
 
 const IconButton: FC<IconButtonProps> = ({
@@ -16,6 +17,7 @@ const IconButton: FC<IconButtonProps> = ({
   onClick,
   id,
   disabled,
+  ariaLabel,
 }) => {
   return (
     <button
@@ -23,6 +25,7 @@ const IconButton: FC<IconButtonProps> = ({
       onClick={onClick}
       id={id}
       disabled={disabled}
+      aria-label={ariaLabel}
     >
       {label}
     </button>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import type { ExplorerRow } from "../../BottomMenu";
 import type { LeftMenuInputValue } from "../../LeftMenu";
 import {
@@ -123,32 +124,36 @@ const isRandomPolygonKind = (value: string): value is RandomPolygonKind =>
   value === "randomRectangles" || value === "random";
 
 export const useDemoController = () => {
+  const { t } = useTranslation();
   const benchmarkAbortController = useRef<AbortController | null>(null);
   const [state, dispatch] = useReducer(demoReducer, undefined, () =>
     createInitialDemoState([]),
   );
-  const handleSelection = useCallback((cellData: PolygonCellData) => {
-    const row = state.explorerRows[cellData.rowIndex];
-    if (!row || (row.id === "total" && cellData.id === "polygon")) return;
+  const handleSelection = useCallback(
+    (cellData: PolygonCellData) => {
+      const row = state.explorerRows[cellData.rowIndex];
+      if (!row || (row.id === "total" && cellData.id === "polygon")) return;
 
-    const selection: PolygonSelection = {
-      polygonId: row.id,
-      polygonIndex: cellData.id === "polygon" ? cellData.itemIndex : null,
-    };
+      const selection: PolygonSelection = {
+        polygonId: row.id,
+        polygonIndex: cellData.id === "polygon" ? cellData.itemIndex : null,
+      };
 
-    if (cellData.type === "click") {
+      if (cellData.type === "click") {
+        dispatch({
+          type: DemoActionType.SelectedPolygonChanged,
+          payload: selection,
+        });
+        return;
+      }
+
       dispatch({
-        type: DemoActionType.SelectedPolygonChanged,
-        payload: selection,
+        type: DemoActionType.HoveredPolygonChanged,
+        payload: cellData.type === "hover" ? selection : null,
       });
-      return;
-    }
-
-    dispatch({
-      type: DemoActionType.HoveredPolygonChanged,
-      payload: cellData.type === "hover" ? selection : null,
-    });
-  }, [state.explorerRows]);
+    },
+    [state.explorerRows],
+  );
   useEffect(() => () => benchmarkAbortController.current?.abort(), []);
 
   useEffect(() => {
@@ -207,7 +212,7 @@ export const useDemoController = () => {
       if (!saveCustomPolygonSets(window.localStorage, polygonSets)) {
         dispatch({
           type: DemoActionType.CustomPolygonErrorChanged,
-          payload: "Unable to save custom polygons in local storage.",
+          payload: t("leftMenu.customEditor.storageError"),
         });
       }
       dispatch({
@@ -217,7 +222,7 @@ export const useDemoController = () => {
     };
 
     loadCustomPolygonData();
-  }, []);
+  }, [t]);
 
   const handleInputValueChange = (value: LeftMenuInputValue, id: string) => {
     dispatch({
@@ -292,7 +297,7 @@ export const useDemoController = () => {
     if (!subj || !clip) {
       dispatch({
         type: DemoActionType.CustomPolygonErrorChanged,
-        payload: "Subject and clip must contain valid polygons.",
+        payload: t("leftMenu.customEditor.invalidPolygons"),
       });
       return;
     }
@@ -312,7 +317,7 @@ export const useDemoController = () => {
     if (!saveCustomPolygonSets(window.localStorage, polygonSets)) {
       dispatch({
         type: DemoActionType.CustomPolygonErrorChanged,
-        payload: "Unable to save custom polygons in local storage.",
+        payload: t("leftMenu.customEditor.storageError"),
       });
       return;
     }
@@ -335,7 +340,7 @@ export const useDemoController = () => {
     if (!saveCustomPolygonSets(window.localStorage, polygonSets)) {
       dispatch({
         type: DemoActionType.CustomPolygonErrorChanged,
-        payload: "Unable to save custom polygons in local storage.",
+        payload: t("leftMenu.customEditor.storageError"),
       });
       return;
     }
@@ -354,7 +359,7 @@ export const useDemoController = () => {
     if (!saveCustomPolygonSets(window.localStorage, polygonSets)) {
       dispatch({
         type: DemoActionType.CustomPolygonErrorChanged,
-        payload: "Unable to save custom polygons in local storage.",
+        payload: t("leftMenu.customEditor.storageError"),
       });
       return;
     }
@@ -471,7 +476,7 @@ export const useDemoController = () => {
     dispatch({ type: DemoActionType.ExplorerEnabledChanged, payload: value });
   };
 
-  const handleOutputFormatChange = (option: unknown) => {
+  const handleOutputFormatChange = useCallback((option: unknown) => {
     if (!option || typeof option !== "object" || !("value" in option)) return;
 
     const selectedFormat = outputFormats.find(
@@ -483,7 +488,7 @@ export const useDemoController = () => {
       type: DemoActionType.OutputFormatChanged,
       payload: selectedFormat,
     });
-  };
+  }, []);
 
   return {
     state,

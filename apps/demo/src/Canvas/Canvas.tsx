@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { useTranslation } from "react-i18next";
 import classNames from "classnames";
 import { Container } from "../components";
 import type { ClipperPolygons, ClippingResult, FillType } from "../features/clipping";
@@ -40,8 +41,9 @@ export const createSvgMarkup = (
   clipFillType: FillType,
   bevel = false,
   selection: PolygonSelection | null = null,
+  ariaLabel = "Polygon result",
 ): string => [
-  '<svg id="p" width="500" height="350" viewBox="0 0 500 350" role="img" aria-label="Polygon result">',
+  `<svg id="p" width="500" height="350" viewBox="0 0 500 350" role="img" aria-label="${ariaLabel}">`,
   bevel ? '<defs><filter id="innerbevel"><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" /><feComposite in="SourceAlpha" in2="blur" operator="arithmetic" k2="-1" k3="1" result="bevel" /><feComposite in="SourceGraphic" in2="bevel" operator="over" /></filter></defs>' : "",
   `<path id="p1" d="${polygonsToSvgPath(result.subject, scale)}" fill-rule="${subjectFillType === "evenOdd" ? "evenodd" : "nonzero"}" />`,
   `<path id="p2" d="${polygonsToSvgPath(result.clip, scale)}" fill-rule="${clipFillType === "evenOdd" ? "evenodd" : "nonzero"}" />`,
@@ -52,14 +54,18 @@ export const createSvgMarkup = (
   "</svg>",
 ].join("");
 
-const Canvas: FC<CanvasProps> = ({ className, result, scale, subjectFillType, clipFillType, bevel, selection }) => (
+const Canvas: FC<CanvasProps> = ({ className, result, scale, subjectFillType, clipFillType, bevel, selection }) => {
+  const { t } = useTranslation();
+
+  return (
   <Container className={classNames(styles.root, className)}>
     {result ? (
       <div className={styles.svg} dangerouslySetInnerHTML={{
-        __html: createSvgMarkup(result, scale, subjectFillType, clipFillType, bevel, selection),
+        __html: createSvgMarkup(result, scale, subjectFillType, clipFillType, bevel, selection, t("canvas.polygonResult")),
       }} />
-    ) : <p className={styles.empty}>Preparing polygons…</p>}
+    ) : <p className={styles.empty}>{t("canvas.preparing")}</p>}
   </Container>
-);
+  );
+};
 
 export default Canvas;
